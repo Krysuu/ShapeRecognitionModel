@@ -211,11 +211,11 @@ COLS = 500
 n_splits = 10
 weights_path = "weights.best.hdf5"
 batch_size = 32
-epochs = 2
+epochs = 10
 learning_rate = 0.005
 dropout = 0.2
 dense_size = 64
-skip_folds_after = 1  # 0 to run all
+skip_folds_after = 0  # 0 to run all
 
 # Main
 if len(sys.argv) != 5:
@@ -258,7 +258,6 @@ if architecture == 'resnet50':
                                              input_shape=(ROWS, COLS, 3)
                                              )
         pretrained_model.trainable = True
-
 elif architecture == 'vgg16':
     preprocess_input = vgg16.preprocess_input
     if train_type == '0':
