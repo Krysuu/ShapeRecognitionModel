@@ -1,0 +1,12 @@
+fname,true_label,predicted_label,ceownik,dwuteownik,katownik,plaskownik
+ceownik_00002-view02.png,ceownik,dwuteownik,0.21408735,0.35597724,0.08965461,0.34028077
+ceownik_00003-view04.png,ceownik,dwuteownik,0.2529382,0.5678251,0.042638462,0.13659832
+ceownik_00005-view02.png,ceownik,dwuteownik,0.285653,0.37879527,0.048340652,0.2872111
+ceownik_00006-view03.png,ceownik,plaskownik,0.21468407,0.17893483,0.2067698,0.39961135
+ceownik_00017-view04.png,ceownik,dwuteownik,0.32277733,0.64291,0.0076771686,0.02663549
+ceownik_00018-view03.png,ceownik,dwuteownik,0.34946012,0.37513766,0.0837251,0.19167714
+ceownik_00075-view01.png,ceownik,plaskownik,0.1545296,0.0033497796,0.029610448,0.8125102
+dwuteownik_00023-view02.png,dwuteownik,plaskownik,0.10597806,0.24478926,0.22528514,0.42394748
+dwuteownik_00046-view03.png,dwuteownik,plaskownik,0.30954698,0.21217254,0.14723434,0.3310461
+katownik_00003-view03.png,katownik,plaskownik,0.16876811,0.0063860826,0.29284376,0.5320021
+katownik_00015-view03.png,katownik,plaskownik,0.051869124,0.023091648,0.051863685,0.87317556
