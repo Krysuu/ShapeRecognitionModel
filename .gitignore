@@ -10,3 +10,10 @@
 /Etap2.5/black_background_data_v2/
 /Etap3/start.py
 /Etap3/weights.best.hdf5
+/.idea/.gitignore
+/Etap3/Etap3.ipynb
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/ShapeRecognitionModel.iml
+/.idea/vcs.xml
