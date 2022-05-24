@@ -1,0 +1,12 @@
+Nazwa pliku,Klasa rzeczywista,Klasa predykowana,ceownik,dwuteownik,katownik,plaskownik
+ceownik_00053-view02.png,ceownik,plaskownik,0.2523576,2.4382955e-05,3.5934296e-05,0.74758214
+ceownik_00069-view03.png,ceownik,plaskownik,0.24705699,0.35538438,0.0006681967,0.39689052
+ceownik_00158-view01.png,ceownik,dwuteownik,0.34960714,0.6373453,0.013047422,1.2247816e-07
+ceownik_00180-view02.png,ceownik,dwuteownik,0.34672847,0.6532694,1.824709e-06,2.8092018e-07
+ceownik_00217-view03.png,ceownik,katownik,0.33088937,3.581026e-05,0.50558585,0.16348898
+dwuteownik_00134-view03.png,dwuteownik,ceownik,0.98891956,0.0109406635,7.113469e-07,0.00013911026
+dwuteownik_00198-view03.png,dwuteownik,katownik,0.033280812,0.12995134,0.8367272,4.0644412e-05
+dwuteownik_00227-view02.png,dwuteownik,ceownik,0.9785186,0.021312017,0.00015550903,1.3902996e-05
+katownik_00173-view02.png,katownik,dwuteownik,0.025381876,0.94903415,0.025576094,7.845961e-06
+katownik_00195-view04.png,katownik,plaskownik,0.008277735,0.0035493034,0.3204747,0.6676982
+plaskownik_00123-view01.png,plaskownik,ceownik,0.51385087,0.00019128624,9.170105e-06,0.4859487
