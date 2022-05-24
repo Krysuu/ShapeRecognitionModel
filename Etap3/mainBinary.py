@@ -9,6 +9,7 @@ from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.optimizers import SGD
+import math
 
 from save_util import *
 
@@ -55,6 +56,7 @@ def preprocess_and_load_data(train_dataframe, test_dataframe, preprocessing_func
         train_dataframe,
         x_col='filename',
         y_col='label',
+        class_mode='binary',
         target_size=(ROWS, COLS),
         batch_size=batch_size
     )
@@ -63,6 +65,7 @@ def preprocess_and_load_data(train_dataframe, test_dataframe, preprocessing_func
         test_dataframe,
         x_col='filename',
         y_col='label',
+        class_mode='binary',
         target_size=(ROWS, COLS),
         batch_size=1,
         shuffle=False
@@ -70,16 +73,14 @@ def preprocess_and_load_data(train_dataframe, test_dataframe, preprocessing_func
     return train_data, test_data
 
 
-def prepare_model(pretrained_model, train_gen, learning_rate, momentum, dropout, dense_size):
-    nclass = len(train_gen.class_indices)
+def prepare_model(pretrained_model, learning_rate, momentum, dropout, dense_size):
     model = Sequential()
     model.add(pretrained_model)
     model.add(Flatten())
     model.add(Dense(dense_size, activation='relu'))
     model.add(Dropout(dropout))
-    model.add(Dense(nclass, activation='softmax'))
-
-    model.compile(loss='categorical_crossentropy',
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy',
                   optimizer=SGD(learning_rate=learning_rate, momentum=momentum),
                   metrics=['accuracy'])
     model.summary()
@@ -102,6 +103,14 @@ def fit_model(model, train_gen, weights_path, epochs):
 def perform_test(preprocess_input, pretrained_model, n_splits, data_directory, result_directory, dense_size, batch_size,
                  learning_rate, momentum):
     df = load_data_to_dataframe(data_directory)
+    nclass = df['label'].nunique()
+    ceownik_df = df.loc[df['label'] == 'ceownik']
+    n_images = len(ceownik_df.index)
+    other_df = df.loc[df['label'] != 'ceownik']
+    other_df = other_df.groupby('label').head(math.floor(n_images/(nclass-1)))
+    other_df = other_df.assign(label='inny')
+    df = pd.concat([ceownik_df, other_df])
+
     prepare_result_directory(result_directory)
 
     kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1)
@@ -122,7 +131,6 @@ def perform_test(preprocess_input, pretrained_model, n_splits, data_directory, r
                                                        )
 
         model = prepare_model(pretrained_model,
-                              train_gen,
                               learning_rate,
                               momentum,
                               dropout,
@@ -140,16 +148,15 @@ def perform_test(preprocess_input, pretrained_model, n_splits, data_directory, r
         model.load_weights(weights_path)
         predicts = model.predict(test_gen, verbose=True)
 
-        save_test_results(test_gen=test_gen, predicts=predicts, result_directory=result_directory,
+        save_test_results_binary(test_gen=test_gen, predicts=predicts, result_directory=result_directory,
                           current_test=current_fold)
-        save_misclassified(test_gen=test_gen,
-                           predicts=predicts,
-                           result_directory=result_directory,
-                           current_fold=current_fold
-                           )
+        save_misclassified_binary(test_gen=test_gen,
+                                  predicts=predicts,
+                                  result_directory=result_directory,
+                                  current_fold=current_fold
+                                  )
 
         save_and_reset_time_logs(result_directory, time_cb)
-
 
 # Constant
 ROWS = 299
