@@ -56,8 +56,8 @@ def save_test_results(test_gen, predicts, result_directory, current_test):
     ax.set_xlabel('Klasa predykowana')
     ax.set_ylabel('Klasa rzeczywista')
     ax.set_title('Macierz pomyłek')
-    ax.xaxis.set_ticklabels(label_names)
-    ax.yaxis.set_ticklabels(label_names)
+    ax.set_xticklabels(label_names, rotation=45)
+    ax.set_yticklabels(label_names, rotation=45)
     plt.savefig(f'{result_directory}/{current_test}_macierz_pomylek.png')
 
     test_acc = accuracy_score(y_true, y_pred)

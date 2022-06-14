@@ -29,7 +29,7 @@ def load_data_to_dataframe(dataset_dir: str):
 
 model = keras.models.load_model('model')
 
-df = load_data_to_dataframe('wiele')
+df = load_data_to_dataframe('pojedyncze')
 test_idg = ImageDataGenerator(preprocessing_function=xception.preprocess_input)
 test_data = test_idg.flow_from_dataframe(
     df,
@@ -41,6 +41,6 @@ test_data = test_idg.flow_from_dataframe(
 )
 
 predicts = model.predict(test_data, verbose=True)
-prepare_result_directory("results_wiele")
-save_test_results(test_data, predicts, "results_wiele", 0)
-save_misclassified(test_data, predicts, "results_wiele", 0)
+prepare_result_directory("results_pojedyncze")
+save_test_results(test_data, predicts, "results_pojedyncze", 0)
+save_misclassified(test_data, predicts, "results_pojedyncze", 0)
