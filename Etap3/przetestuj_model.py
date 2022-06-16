@@ -3,11 +3,11 @@ from keras.preprocessing.image import ImageDataGenerator
 from tensorflow import keras
 from load_save_util import *
 
-#data = 'pojedyncze'
-#results = 'results_pojedyncze'
+data = 'pojedyncze'
+results = 'results_pojedyncze'
 
-data = 'wiele'
-results = 'results_wiele'
+#data = 'wiele'
+#results = 'results_wiele'
 
 model = keras.models.load_model('model')
 
