@@ -1,4 +1,3 @@
-import glob
 import argparse
 from timeit import default_timer as timer
 
@@ -10,7 +9,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.optimizers import SGD
 
-from save_util import *
+from load_save_util import *
 
 class TimingCallback(Callback):
     def __init__(self, logs={}):
@@ -28,24 +27,6 @@ class TimingCallback(Callback):
 
 
 time_cb = TimingCallback()
-
-
-def prepare_result_directory(result_directory):
-    isExist = os.path.exists(result_directory)
-    if not isExist:
-        os.makedirs(result_directory)
-
-
-def load_data_to_dataframe(dataset_dir: str):
-    image_paths = []
-    image_labels = []
-    for filename in glob.glob(dataset_dir + '/*/*.png'):
-        image_paths.append(filename)
-        image_label = filename.split('\\')[1]
-        image_labels.append(image_label)
-
-    return pd.DataFrame(list(zip(image_paths, image_labels)), columns=['filename', 'label'])
-
 
 def preprocess_and_load_data(train_dataframe, test_dataframe, preprocessing_function, batch_size):
     train_idg = ImageDataGenerator(preprocessing_function=preprocessing_function)

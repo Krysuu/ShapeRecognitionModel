@@ -7,6 +7,25 @@ import pandas as pd
 import seaborn as sns
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+import glob
+
+
+def prepare_result_directory(result_directory):
+    isExist = os.path.exists(result_directory)
+    if not isExist:
+        os.makedirs(result_directory)
+
+
+def load_data_to_dataframe(dataset_dir: str):
+    image_paths = []
+    image_labels = []
+    for filename in glob.glob(dataset_dir + '/*/*.*'):
+        image_paths.append(filename)
+        image_label = filename.split('\\')[1]
+        image_labels.append(image_label)
+
+    return pd.DataFrame(list(zip(image_paths, image_labels)), columns=['filename', 'label'])
+
 
 def save_training_progress(history, current_fold, result_directory):
     plt.clf()
@@ -44,6 +63,7 @@ def save_or_append_csv(csv_path, values):
 
 def save_test_results(test_gen, predicts, result_directory, current_test):
     plt.clf()
+    plt.figure(figsize=(10, 10))
     label_names = list(test_gen.class_indices)
     y_true = test_gen.labels
     y_pred = np.argmax(predicts, axis=1)
@@ -71,6 +91,7 @@ def save_test_results(test_gen, predicts, result_directory, current_test):
         write.writerow([test_acc])
 
     print(f'Test {current_test} accuracy: {test_acc}')
+
 
 def save_test_results_binary(test_gen, predicts, result_directory, current_test):
     plt.clf()
@@ -103,6 +124,7 @@ def save_test_results_binary(test_gen, predicts, result_directory, current_test)
 
     print(f'Test {current_test} accuracy: {test_acc}')
 
+
 def save_misclassified(test_gen, predicts, result_directory, current_fold):
     label_index = {v: k for k, v in test_gen.class_indices.items()}
     columns = list(label_index.values())
@@ -124,19 +146,21 @@ def save_misclassified(test_gen, predicts, result_directory, current_fold):
     csv_path = f'{result_directory}/{current_fold}_blednie_zaklasyfikowane.csv'
     misclassified_df.to_csv(csv_path, index=False)
 
+
 def save_misclassified_binary(test_gen, predicts, result_directory, current_fold):
     label_index = {v: k for k, v in test_gen.class_indices.items()}
     predicts_flat = predicts.flatten()
     predicts_0_1 = np.rint(predicts_flat)
     predicts_labels = [label_index[p] for p in predicts_0_1]
 
-    misclassified_df = pd.DataFrame(columns=['Nazwa pliku', 'Klasa rzeczywista', 'Klasa predykowana', 'Prawdopodobieństwo'])
+    misclassified_df = pd.DataFrame(
+        columns=['Nazwa pliku', 'Klasa rzeczywista', 'Klasa predykowana', 'Prawdopodobieństwo'])
     misclassified_df['Nazwa pliku'] = [os.path.basename(x) for x in test_gen.filenames]
     misclassified_df['Klasa rzeczywista'] = [label_index[p] for p in test_gen.labels]
     misclassified_df['Klasa predykowana'] = predicts_labels
     misclassified_df['Prawdopodobieństwo'] = predicts_flat
 
-    #zamiana przedziału 0-1 na prawdopodobieństwo klasy predykowanej
+    # zamiana przedziału 0-1 na prawdopodobieństwo klasy predykowanej
     misclassified_df['Prawdopodobieństwo'] = np.where(misclassified_df['Klasa predykowana'] == 'ceownik', 1, 0) + \
                                              misclassified_df['Prawdopodobieństwo'] * \
                                              np.where(misclassified_df['Klasa predykowana'] == 'ceownik', -1, 1)
@@ -146,6 +170,7 @@ def save_misclassified_binary(test_gen, predicts, result_directory, current_fold
 
     csv_path = f'{result_directory}/{current_fold}_blednie_zaklasyfikowane.csv'
     misclassified_df.to_csv(csv_path, index=False)
+
 
 def save_and_reset_time_logs(result_directory, time_cb):
     csv_path = f'{result_directory}/czas_epoka.csv'

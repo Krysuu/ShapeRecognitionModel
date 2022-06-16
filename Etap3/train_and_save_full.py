@@ -1,4 +1,3 @@
-import glob
 import argparse
 
 import tensorflow.keras.applications.xception as xception
@@ -8,19 +7,7 @@ from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import SGD
 
-from save_util import *
-
-
-def load_data_to_dataframe(dataset_dir: str):
-    image_paths = []
-    image_labels = []
-    for filename in glob.glob(dataset_dir + '/*/*.png'):
-        image_paths.append(filename)
-        image_label = filename.split('\\')[1]
-        image_labels.append(image_label)
-
-    return pd.DataFrame(list(zip(image_paths, image_labels)), columns=['filename', 'label'])
-
+from load_save_util import *
 
 def start(data_directory, dense_size, batch_size, learning_rate, momentum):
     df = load_data_to_dataframe(data_directory)
