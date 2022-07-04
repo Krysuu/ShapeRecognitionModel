@@ -58,14 +58,14 @@ def prepare_model(pretrained_model, train_gen, learning_rate, momentum, dropout,
     model.add(Dense(dense_size, activation='relu'))
     model.add(Dropout(dropout))
 
-    if not is_binary:
-        model.add(Dense(len(train_gen.class_indices), activation='softmax'))
-        model.compile(loss='categorical_crossentropy',
+    if is_binary:
+        model.add(Dense(1, activation='sigmoid'))
+        model.compile(loss='binary_crossentropy',
                       optimizer=SGD(learning_rate=learning_rate, momentum=momentum),
                       metrics=['accuracy'])
     else:
-        model.add(Dense(1, activation='sigmoid'))
-        model.compile(loss='binary_crossentropy',
+        model.add(Dense(len(train_gen.class_indices), activation='softmax'))
+        model.compile(loss='categorical_crossentropy',
                       optimizer=SGD(learning_rate=learning_rate, momentum=momentum),
                       metrics=['accuracy'])
 
@@ -160,7 +160,7 @@ parser.add_argument('--dense_size', type=int, default=128, help='Size of final d
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning_rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='Momentum')
 parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
-parser.add_argument('--decay_rate', type=float, default=1, help='Decay rate')
+parser.add_argument('--decay_rate', type=float, default=0.94, help='Decay rate')
 parser.add_argument('--binary_class', type=str, default="", help='Binary class')
 args = vars(parser.parse_args())
 
