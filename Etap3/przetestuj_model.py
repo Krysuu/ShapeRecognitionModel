@@ -6,15 +6,11 @@ from load_save_util import *
 data = 'zbiory_danych/prawdziwe_zdjecia/pojedyncze'
 results = 'results_pojedyncze'
 
-# data = 'zbiory_danych/prawdziwe_zdjecia/wiele'
-# results = 'results_wiele'
-
-# binary_class = ""
-# is_binary = False
+#data = 'prawdziwe_zdjecia_resized/wiele'
+#results = 'results_wiele'
 
 binary_class = ""
 is_binary = False
-
 
 class_mode = 'categorical'
 if is_binary:

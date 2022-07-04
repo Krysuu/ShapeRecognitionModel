@@ -62,7 +62,7 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
     model.summary()
 
     checkpoint = ModelCheckpoint(weights_path, monitor='loss', verbose=1, save_best_only=True, mode='min')
-    early = EarlyStopping(monitor='loss', patience=3)
+    early = EarlyStopping(monitor='loss', patience=2)
     lr_callback = LearningRateScheduler(scheduler, verbose=0)
 
     callbacks_list = [checkpoint, early, lr_callback]
