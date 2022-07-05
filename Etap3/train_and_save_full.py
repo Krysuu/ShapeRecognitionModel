@@ -54,7 +54,7 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
                       optimizer=SGD(learning_rate=learning_rate, momentum=momentum),
                       metrics=['accuracy'])
     else:
-        model.add(Dense(len(train_idg.class_indices), activation='softmax'))
+        model.add(Dense(len(train_data.class_indices), activation='softmax'))
         model.compile(loss='categorical_crossentropy',
                       optimizer=SGD(learning_rate=learning_rate, momentum=momentum),
                       metrics=['accuracy'])
@@ -86,7 +86,7 @@ dropout = 0.5
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dataset_path', type=str, help='path to dataset directory')
-parser.add_argument('--dense_size', type=int, default=256, help='Size of final dense layer')
+parser.add_argument('--dense_size', type=int, default=128, help='Size of final dense layer')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning_rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='Momentum')
 parser.add_argument('--batch_size', type=int, default=64, help='Batch size')

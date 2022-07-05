@@ -70,10 +70,52 @@ class CeownikResource(object):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/ceownik', True, 'ceownik')
 
+class DwuteownikResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/dwuteownik', True, 'dwuteownik')
+
+class KatownikResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/katownik', True, 'katownik')
+
+class KwadratowyResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/kwadratowy', True, 'kwadratowy')
+
+class OkraglyResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/okragly', True, 'okragly')
+
+class PlaskownikResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/plaskownik', True, 'plaskownik')
+
+class ProfilResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/profil', True, 'profil')
+
+class RuraResource(object):
+    def on_post(self, req, resp):
+        image = get_image_from_request(req)
+        resp.body = predictWithModel(image, 'models/rura', True, 'rura')
+
 
 app = application = falcon.API(middleware=[MultipartMiddleware()])
 app.add_route('/models/standard', StandardResource())
 app.add_route('/models/ceownik', CeownikResource())
+app.add_route('/models/dwuteownik', DwuteownikResource())
+app.add_route('/models/katownik', KatownikResource())
+app.add_route('/models/kwadratowy', KwadratowyResource())
+app.add_route('/models/okragly', OkraglyResource())
+app.add_route('/models/plaskownik', PlaskownikResource())
+app.add_route('/models/profil', ProfilResource())
+app.add_route('/models/rura', RuraResource())
 
 if __name__ == '__main__':
     with make_server('', 8000, app) as httpd:
