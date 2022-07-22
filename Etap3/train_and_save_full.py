@@ -1,11 +1,14 @@
 import argparse
 
-import tensorflow.keras.applications.xception as xception
+import keras.applications.xception as xception
 from keras.callbacks import ModelCheckpoint, EarlyStopping, LearningRateScheduler
-from keras.layers import Dropout, Flatten, Dense
+from keras.layers import Dropout, Dense
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import SGD
+from datetime import datetime
+import tensorflow as tf
+
 
 from load_save_util import *
 
@@ -19,7 +22,7 @@ def scheduler(epoch, lr):
 
 def start(data_directory, dense_size, batch_size, learning_rate, momentum, binary_class, is_binary):
     df = load_data_to_dataframe(data_directory, binary_class, is_binary)
-    train_idg = ImageDataGenerator(preprocessing_function=xception.preprocess_input)
+    train_idg = ImageDataGenerator(preprocessing_function=tf.keras.applications.densenet.preprocess_input)
 
     class_mode = 'categorical'
     if is_binary:
@@ -34,17 +37,15 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
         batch_size=batch_size
     )
 
-    pretrained_model = xception.Xception(weights="imagenet",
+    pretrained_model = tf.keras.applications.DenseNet201(weights="imagenet",
                                          include_top=False,
-                                         input_shape=(ROWS, COLS, 3)
+                                         input_shape=(ROWS, COLS, 3),
+                                         pooling='max'
                                          )
     pretrained_model.trainable = False
 
     model = Sequential()
     model.add(pretrained_model)
-    model.add(Flatten())
-    model.add(Dense(dense_size, activation='relu'))
-    model.add(Dropout(dropout))
     model.add(Dense(dense_size, activation='relu'))
     model.add(Dropout(dropout))
 
@@ -74,12 +75,14 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
               workers=4
               )
 
-    model.save('model')
+    now = datetime.now()
+    current_time = now.strftime("%H_%M_%S")
+    model.save('model' + current_time)
 
 
 # Constant
-ROWS = 299
-COLS = 299
+ROWS = 224
+COLS = 224
 weights_path = "weights.best.hdf5"
 epochs = 50
 dropout = 0.5
