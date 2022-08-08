@@ -1,6 +1,7 @@
 import argparse
 
-import tensorflow.keras.applications.xception as xception
+import tensorflow as tf
+
 from keras.callbacks import ModelCheckpoint, EarlyStopping, LearningRateScheduler
 from keras.layers import Dropout, Flatten, Dense
 from keras.models import Sequential
@@ -52,9 +53,6 @@ def preprocess_and_load_data(train_dataframe, test_dataframe, preprocessing_func
 def prepare_model(pretrained_model, train_gen, learning_rate, momentum, dropout, dense_size, is_binary):
     model = Sequential()
     model.add(pretrained_model)
-    model.add(Flatten())
-    model.add(Dense(dense_size, activation='relu'))
-    model.add(Dropout(dropout))
     model.add(Dense(dense_size, activation='relu'))
     model.add(Dropout(dropout))
 
@@ -149,26 +147,60 @@ ROWS = 299
 COLS = 299
 n_splits = 5
 weights_path = "weights.best.hdf5"
-epochs = 50
+epochs = 40
 dropout = 0.5
 skip_folds_after = 0
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dataset_path', type=str, help='path to dataset directory')
 parser.add_argument('result_path', type=str, help='path to result directory')
+parser.add_argument('--model', type=str, help='Model architecture')
 parser.add_argument('--dense_size', type=int, default=128, help='Size of final dense layer')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning_rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='Momentum')
-parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
-parser.add_argument('--decay_rate', type=float, default=0.94, help='Decay rate')
+parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+parser.add_argument('--decay_rate', type=float, default=1, help='Decay rate')
 parser.add_argument('--binary_class', type=str, default="", help='Binary class')
 args = vars(parser.parse_args())
 
 decay_rate = args['decay_rate']
-pretrained_model = xception.Xception(weights="imagenet",
-                                     include_top=False,
-                                     input_shape=(ROWS, COLS, 3)
-                                     )
+model_architecture = args['model']
+
+preprocess_function = None
+
+if model_architecture == "EfficientNetB4":
+    ROWS = 224
+    COLS = 224
+    pretrained_model = tf.keras.applications.EfficientNetB4(weights="imagenet",
+                                                            include_top=False,
+                                                            pooling='max'
+                                                            )
+    preprocess_function = tf.keras.applications.efficientnet.preprocess_input
+elif model_architecture == "Xception":
+    ROWS = 299
+    COLS = 299
+    pretrained_model = tf.keras.applications.Xception(weights="imagenet",
+                                                      include_top=False,
+                                                      pooling='max'
+                                                      )
+    preprocess_function = tf.keras.applications.xception.preprocess_input
+elif model_architecture == "DenseNet201":
+    ROWS = 224
+    COLS = 224
+    pretrained_model = tf.keras.applications.DenseNet201(weights="imagenet",
+                                                         include_top=False,
+                                                         pooling='max'
+                                                         )
+    preprocess_function = tf.keras.applications.densenet.preprocess_input
+else:
+    ROWS = 224
+    COLS = 224
+    pretrained_model = tf.keras.applications.ResNet50V2(weights="imagenet",
+                                                        include_top=False,
+                                                        pooling='max'
+                                                        )
+    preprocess_function = tf.keras.applications.resnet_v2.preprocess_input
+
 pretrained_model.trainable = False
 
 binary_class = args['binary_class']
@@ -176,7 +208,7 @@ is_binary = False
 if binary_class != "":
     is_binary = True
 
-perform_test(xception.preprocess_input,
+perform_test(preprocess_function,
              pretrained_model,
              n_splits,
              args['dataset_path'],

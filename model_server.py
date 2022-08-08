@@ -3,13 +3,14 @@
 import json
 import io
 
-import tensorflow.keras.applications.xception as xception
+import tensorflow as tf
 from falcon_multipart.middleware import MultipartMiddleware
 from wsgiref.simple_server import make_server
 from PIL import Image
 import numpy as np
 import falcon
 from tensorflow import keras
+import gc
 
 model = keras.models.load_model('models/8k_standard')
 current_model_name = 'models/8k_standard'
@@ -18,13 +19,15 @@ current_model_name = 'models/8k_standard'
 def predictWithModel(img, model_name, is_binary, class_name):
     global model, current_model_name
     if current_model_name != model_name:
+        del (model)
+        gc.collect()
         model = keras.models.load_model(model_name)
         current_model_name = model_name
 
-    img = img.resize((299, 299), Image.ANTIALIAS)
+    img = img.resize((224, 224), Image.ANTIALIAS)
     x = np.array(img)
     x = np.expand_dims(x, axis=0)
-    x = xception.preprocess_input(x)
+    x = tf.keras.applications.densenet.preprocess_input(x)
 
     predicted = model.predict(x)
 
@@ -70,35 +73,42 @@ class CeownikResource(object):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/ceownik', True, 'ceownik')
 
+
 class DwuteownikResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/dwuteownik', True, 'dwuteownik')
+
 
 class KatownikResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/katownik', True, 'katownik')
 
+
 class KwadratowyResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/kwadratowy', True, 'kwadratowy')
+
 
 class OkraglyResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/okragly', True, 'okragly')
 
+
 class PlaskownikResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/plaskownik', True, 'plaskownik')
 
+
 class ProfilResource(object):
     def on_post(self, req, resp):
         image = get_image_from_request(req)
         resp.body = predictWithModel(image, 'models/profil', True, 'profil')
+
 
 class RuraResource(object):
     def on_post(self, req, resp):

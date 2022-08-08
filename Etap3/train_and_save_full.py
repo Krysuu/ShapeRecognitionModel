@@ -1,7 +1,6 @@
 import argparse
 
-import keras.applications.xception as xception
-from keras.callbacks import ModelCheckpoint, EarlyStopping, LearningRateScheduler
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Dropout, Dense
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
@@ -9,15 +8,7 @@ from tensorflow.keras.optimizers import SGD
 from datetime import datetime
 import tensorflow as tf
 
-
 from load_save_util import *
-
-
-def scheduler(epoch, lr):
-    if epoch < 1:
-        return lr
-    else:
-        return lr * decay_rate
 
 
 def start(data_directory, dense_size, batch_size, learning_rate, momentum, binary_class, is_binary):
@@ -38,10 +29,10 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
     )
 
     pretrained_model = tf.keras.applications.DenseNet201(weights="imagenet",
-                                         include_top=False,
-                                         input_shape=(ROWS, COLS, 3),
-                                         pooling='max'
-                                         )
+                                                         include_top=False,
+                                                         input_shape=(ROWS, COLS, 3),
+                                                         pooling='max'
+                                                         )
     pretrained_model.trainable = False
 
     model = Sequential()
@@ -63,10 +54,9 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
     model.summary()
 
     checkpoint = ModelCheckpoint(weights_path, monitor='loss', verbose=1, save_best_only=True, mode='min')
-    early = EarlyStopping(monitor='loss', patience=2)
-    lr_callback = LearningRateScheduler(scheduler, verbose=0)
+    early = EarlyStopping(monitor='loss', patience=3)
 
-    callbacks_list = [checkpoint, early, lr_callback]
+    callbacks_list = [checkpoint, early]
     model.fit(train_data,
               epochs=epochs,
               shuffle=True,
@@ -84,7 +74,7 @@ def start(data_directory, dense_size, batch_size, learning_rate, momentum, binar
 ROWS = 224
 COLS = 224
 weights_path = "weights.best.hdf5"
-epochs = 50
+epochs = 40
 dropout = 0.5
 
 parser = argparse.ArgumentParser()
